@@ -12,18 +12,25 @@ anchored to Syracuse University colours. **viridisSYR** starts at Syracuse navy 
 viridis *plasma* start colour (`#0D0887`) and purple (`#7E03A8`) and then Syracuse orange (`#F76700`), and ends at the
 plasma yellow (`#F0F921`).
 
-```{r bar, echo = FALSE, fig.width = 7.2, fig.height = 3.3}
+```{r bar, echo = FALSE, fig.width = 7.2, fig.height = 4.1}
 x <- seq(0, 1, length.out = 512)
 cols <- syr_at(x)
+pl_cols <- substr(viridisLite::plasma(512), 1, 7)               # original viridis plasma
+gray_of <- function(cols) grDevices::gray(cam02ucs(cols)$Jp / 100)
+h_big <- 0.6; h_sm <- 0.3                                        # the three small bars share one height
 bars <- rbind(
-  data.frame(x = x, y = 2.0,  h = 0.6,  fill = cols),
-  data.frame(x = x, y = 1.38, h = 0.3,  fill = grDevices::gray(cam02ucs(cols)$Jp / 100)))
-top <- 2.3                                           # top edge of the colour bar
+  data.frame(x = x, y = 2.0,  h = h_big, fill = cols),                 # viridisSYR (big)
+  data.frame(x = x, y = 1.38, h = h_sm,  fill = gray_of(cols)),        # viridisSYR, grayscale
+  data.frame(x = x, y = 0.95, h = h_sm,  fill = pl_cols),              # viridis plasma
+  data.frame(x = x, y = 0.52, h = h_sm,  fill = gray_of(pl_cols)))     # viridis plasma, grayscale
+top <- 2.3                                           # top edge of the big bar
 pk  <- syr_plasma_keys()                             # plasma key colours and where they sit on the scale
 pl_lab <- data.frame(x = pk$closest_position, hex = pk$plasma_hex,
                      txt = paste0(pk$plasma_hex, "\n(plasma ", c("0", "25", "50", "75", "100"), "%)"))
 su_lab <- data.frame(x = c(0, syr_keys()$position[4]), txt = c("#000E54\nSU navy", "#F76700\nSU orange"))
 stem <- function(d, y_top) data.frame(x = d$x, y = y_top, yend = top + 0.02)
+row_lab <- data.frame(y = c(2.0, 1.38, 0.95, 0.52),
+                      txt = c("viridisSYR", "grayscale", "viridis plasma", "grayscale"))
 ggplot() +
   geom_tile(data = bars, aes(x, y, fill = fill, height = h), width = 1 / 512 * 1.05) + scale_fill_identity() +
   geom_segment(data = stem(pl_lab, top + 0.45), aes(x = x, xend = x, y = y, yend = yend),
@@ -32,13 +39,12 @@ ggplot() +
   geom_segment(data = stem(su_lab, top + 1.2), aes(x = x, xend = x, y = y, yend = yend),
                arrow = arrow(length = grid::unit(1.8, "mm"), type = "closed"), linewidth = 0.35, colour = "grey20") +
   geom_text(data = su_lab, aes(x, top + 1.25, label = txt), vjust = 0, size = 2.9, fontface = "bold", lineheight = 0.95) +
-  annotate("text", x = -0.045, y = 2.0, label = "colour", hjust = 1, size = 2.8, colour = "grey30") +
-  annotate("text", x = -0.045, y = 1.38, label = "gray", hjust = 1, size = 2.8, colour = "grey30") +
-  scale_x_continuous(limits = c(-0.12, 1.06), breaks = c(0, 0.25, 0.5, 0.75, 1), expand = c(0, 0)) +
-  scale_y_continuous(limits = c(1.1, 3.9), breaks = NULL) +
+  geom_text(data = row_lab, aes(x = -0.02, y = y, label = txt), hjust = 1, size = 2.8, colour = "grey30") +
+  scale_x_continuous(limits = c(-0.2, 1.1), breaks = c(0, 0.25, 0.5, 0.75, 1), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(0.25, 3.9), breaks = NULL) +
   labs(x = "position on the scale",  y = NULL,
-       caption = paste0("Top: Syracuse colours (bold) and the viridis plasma key colours, at the position of the same or closest colour on the scale.\n",
-                        "Gray strip: perceptual lightness J' (CAM02-UCS).")) +
+       caption = paste0("Top bar: viridisSYR, with the Syracuse colours (bold) and the viridis plasma key colours at the position of the same or closest colour.\n",
+                        "Below: grayscale of viridisSYR (perceptual lightness J' in CAM02-UCS), original viridis plasma, and its grayscale.")) +
   theme_minimal(base_size = 10) + theme(panel.grid = element_blank(), plot.caption = element_text(hjust = 0, size = 7.5, colour = "grey30"))
 ```
 
