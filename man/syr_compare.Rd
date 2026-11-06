@@ -28,7 +28,7 @@ A data frame: a `scale` column followed by the [syr_metrics()] columns.
 }
 \description{
 Runs [syr_metrics()] for several scales and stacks the results. By default it
-compares viridis-SYR with viridis 'plasma' (the scale it is derived from),
+compares viridisSYR with viridis 'plasma' (the scale it is derived from),
 using 256 colours each.
 }
 \examples{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/syr.R
 \name{syr}
 \alias{syr}
-\title{viridis-SYR colour scale}
+\title{viridisSYR colour scale}
 \usage{
 syr(n, alpha = 1, begin = 0, end = 1, direction = 1)
 }
@@ -21,7 +21,7 @@ ends. Use them to use only part of the scale.}
 A character vector of hex colours.
 }
 \description{
-`syr()` returns `n` colours from the viridis-SYR scale: Syracuse University
+`syr()` returns `n` colours from the viridisSYR scale: Syracuse University
 navy (`#000E54`) at position 0, the viridis 'plasma' purple (`#7E03A8`) at
 0.25, Syracuse University orange (`#F76700`) at 0.673, and the viridis
 'plasma' yellow (`#F0F921`) at 1, with smooth transitions between them

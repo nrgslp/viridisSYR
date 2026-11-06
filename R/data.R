@@ -1,4 +1,4 @@
-#' The viridis-SYR colour map
+#' The viridisSYR colour map
 #'
 #' The fixed colour map behind [syr()]: 1001 colours at positions 0, 0.001, ...,
 #' 1. Navy (`#000E54`) is at position 0, the plasma purple at 0.25, Syracuse

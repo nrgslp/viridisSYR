@@ -3,7 +3,7 @@
 \docType{data}
 \name{syr.map}
 \alias{syr.map}
-\title{The viridis-SYR colour map}
+\title{The viridisSYR colour map}
 \format{
 A data frame with 1001 rows and columns:
 \describe{

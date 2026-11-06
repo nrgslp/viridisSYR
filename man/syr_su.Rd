@@ -14,7 +14,7 @@ A named character vector of hex colours.
 }
 \description{
 Returns the two Syracuse University brand colours as they appear on the
-viridis-SYR scale. They are exactly `#000E54` (navy) and `#F76700` (orange).
+viridisSYR scale. They are exactly `#000E54` (navy) and `#F76700` (orange).
 }
 \examples{
 syr_su()

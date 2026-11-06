@@ -2,7 +2,7 @@
 % Please edit documentation in R/syr.R
 \name{syr_keys}
 \alias{syr_keys}
-\title{Key colours of the viridis-SYR scale}
+\title{Key colours of the viridisSYR scale}
 \usage{
 syr_keys()
 }

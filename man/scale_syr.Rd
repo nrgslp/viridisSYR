@@ -8,7 +8,7 @@
 \alias{scale_colour_syr_d}
 \alias{scale_color_syr_d}
 \alias{scale_fill_syr_d}
-\title{viridis-SYR colour scales for ggplot2}
+\title{viridisSYR colour scales for ggplot2}
 \usage{
 scale_colour_syr_c(
   ...,

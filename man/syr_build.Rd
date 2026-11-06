@@ -2,7 +2,7 @@
 % Please edit documentation in R/syr.R
 \name{syr_build}
 \alias{syr_build}
-\title{Rebuild the viridis-SYR colour map}
+\title{Rebuild the viridisSYR colour map}
 \usage{
 syr_build(n = .syr$n)
 }

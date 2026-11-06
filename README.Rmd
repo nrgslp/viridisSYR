@@ -1,4 +1,4 @@
-# viridis-SYR
+# viridisSYR
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.path = "man/figures/README-",
@@ -8,9 +8,8 @@ library(ggplot2)
 ```
 
 An R package with one continuous colour scale in the [viridis](https://sjmgarnier.github.io/viridis/) family,
-anchored to Syracuse University colours. **viridis-SYR** starts at Syracuse navy (`#000E54`), passes through the
+anchored to Syracuse University colours. **viridisSYR** starts at Syracuse navy (`#000E54`), passes through the
 viridis *plasma* purple (`#7E03A8`) and Syracuse orange (`#F76700`), and ends at the plasma yellow (`#F0F921`).
-The R package is `viridisSYR`.
 
 ```{r bar, echo = FALSE}
 d <- data.frame(x = seq(0, 1, length.out = 256))
@@ -24,8 +23,8 @@ Not affiliated with or endorsed by Syracuse University. The two Syracuse hex cod
 ## Install
 
 ```r
-# from a local clone of this repository
-install.packages("path/to/viridis-SYR", repos = NULL, type = "source")
+# install.packages("remotes")
+remotes::install_github("nrgslp/viridisSYR")
 ```
 
 ## Use
@@ -66,7 +65,7 @@ cmp[, c("scale", "J_start", "J_end", "J_monotone", "J_r2", "dE_cv", "chroma_mean
 SYR keeps plasma's lightness order and colour sequence but is less uniform than plasma (`dE_cv` is the
 coefficient of variation of the colour difference between neighbouring colours; lower is more uniform), because it
 is bent through two fixed colours. See `vignette("compare-with-plasma")` for the full comparison, and
-`vignette("viridis-SYR")` for use cases with toy data.
+`vignette("viridisSYR")` for use cases with toy data.
 
 ## How the colours are defined
 

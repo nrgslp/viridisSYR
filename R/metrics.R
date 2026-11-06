@@ -87,7 +87,7 @@ syr_metrics <- function(colors, deficiency = c("none", "deutan", "protan", "trit
 #' Compare colour scales with viridis' criteria
 #'
 #' Runs [syr_metrics()] for several scales and stacks the results. By default it
-#' compares viridis-SYR with viridis 'plasma' (the scale it is derived from),
+#' compares viridisSYR with viridis 'plasma' (the scale it is derived from),
 #' using 256 colours each.
 #'
 #' @param ... Named character vectors of colours (low to high). If none are
@@ -112,7 +112,7 @@ syr_compare <- function(..., deficiency = c("none", "deutan", "protan", "tritan"
 #'
 #' The five key colours of viridis 'plasma' are `viridisLite::plasma(5)`:
 #' `#0D0887`, `#7E03A8`, `#CC4678`, `#F89441` and `#F0F921` at positions 0,
-#' 0.25, 0.5, 0.75 and 1. For each, this finds the colour on the viridis-SYR
+#' 0.25, 0.5, 0.75 and 1. For each, this finds the colour on the viridisSYR
 #' scale that is closest in CAM02-UCS (smallest \eqn{\Delta E'}), and also reports
 #' the SYR colour at the same position. The `call` column gives the code that
 #' returns the closest colour directly.

@@ -1,10 +1,10 @@
 ---
-title: "Using viridis-SYR"
+title: "Using viridisSYR"
 author: "Nina R. Benway"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using viridis-SYR}
+  %\VignetteIndexEntry{Using viridisSYR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,7 +16,7 @@ library(ggplot2)
 set.seed(1)
 ```
 
-**viridis-SYR** is a continuous colour scale in the viridis family. It starts at Syracuse University navy,
+**viridisSYR** is a continuous colour scale in the viridis family. It starts at Syracuse University navy,
 passes through the viridis 'plasma' purple and Syracuse University orange, and ends at the plasma yellow.
 This vignette shows, with toy data, how to (1) get the Syracuse colours directly from the scale, (2) use the
 gradient in plots, and (3) call the colours closest to the plasma key colours. The comparison with

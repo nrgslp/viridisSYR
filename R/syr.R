@@ -1,6 +1,6 @@
-#' viridis-SYR colour scale
+#' viridisSYR colour scale
 #'
-#' `syr()` returns `n` colours from the viridis-SYR scale: Syracuse University
+#' `syr()` returns `n` colours from the viridisSYR scale: Syracuse University
 #' navy (`#000E54`) at position 0, the viridis 'plasma' purple (`#7E03A8`) at
 #' 0.25, Syracuse University orange (`#F76700`) at 0.673, and the viridis
 #' 'plasma' yellow (`#F0F921`) at 1, with smooth transitions between them
@@ -30,7 +30,7 @@ syr <- function(n, alpha = 1, begin = 0, end = 1, direction = 1) {
   syr_at(pos, alpha = alpha)
 }
 
-#' Colours at exact positions on the viridis-SYR scale
+#' Colours at exact positions on the viridisSYR scale
 #'
 #' Returns the colour at any position between 0 (navy end) and 1 (yellow end).
 #' Use [syr_keys()] for the positions of the Syracuse and viridis key colours.
@@ -54,7 +54,7 @@ syr_at <- function(position, alpha = 1) {
   hex
 }
 
-#' Palette function for viridis-SYR
+#' Palette function for viridisSYR
 #'
 #' @inheritParams syr
 #' @return A function of one argument (`n`) that returns `n` colours, for use
@@ -67,7 +67,7 @@ syr_pal <- function(alpha = 1, begin = 0, end = 1, direction = 1) {
   function(n) syr(n, alpha, begin, end, direction)
 }
 
-#' Key colours of the viridis-SYR scale
+#' Key colours of the viridisSYR scale
 #'
 #' The four colours that define the scale and their positions: two Syracuse
 #' University brand colours and two viridis 'plasma' colours.
@@ -90,7 +90,7 @@ syr_keys <- function() {
 #' The Syracuse University colours, retrieved from the scale
 #'
 #' Returns the two Syracuse University brand colours as they appear on the
-#' viridis-SYR scale. They are exactly `#000E54` (navy) and `#F76700` (orange).
+#' viridisSYR scale. They are exactly `#000E54` (navy) and `#F76700` (orange).
 #'
 #' @param which Which colour(s): `"navy"`, `"orange"`, or both (default).
 #' @return A named character vector of hex colours.
@@ -145,7 +145,7 @@ syr_value_at <- function(key, limits = c(0, 1), begin = 0, end = 1, direction = 
   n = 1001
 )
 
-#' Rebuild the viridis-SYR colour map
+#' Rebuild the viridisSYR colour map
 #'
 #' The construction behind [syr.map]. It is exported so the map can be
 #' reproduced and checked; the package uses the stored map, so results do not

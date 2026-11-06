@@ -1,4 +1,4 @@
-#' viridis-SYR colour scales for ggplot2
+#' viridisSYR colour scales for ggplot2
 #'
 #' Continuous (`_c`) and discrete (`_d`) colour and fill scales using
 #' [syr()]. The interface follows `ggplot2::scale_colour_viridis_c()` and

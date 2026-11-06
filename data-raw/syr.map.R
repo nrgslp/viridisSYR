@@ -1,4 +1,4 @@
-# Builds data/syr.map.rda: the fixed 1001-colour viridis-SYR map.
+# Builds data/syr.map.rda: the fixed 1001-colour viridisSYR map.
 # Run from the package root after devtools/pkgload::load_all():
 #   source("data-raw/syr.map.R")
 pkgload::load_all(".", quiet = TRUE)

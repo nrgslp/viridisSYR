@@ -1,10 +1,10 @@
 ---
-title: "viridis-SYR compared with viridis plasma"
+title: "viridisSYR compared with viridis plasma"
 author: "Nina R. Benway"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{viridis-SYR compared with viridis plasma}
+  %\VignetteIndexEntry{viridisSYR compared with viridis plasma}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -155,7 +155,7 @@ of its normal-vision value for deutan, protan and tritan simulations; plasma's i
 | Mean chroma | `r round(p$chroma_mean, 1)` | `r round(s$chroma_mean, 1)` |
 | Passes through Syracuse navy and orange exactly | no | yes |
 
-viridis-SYR keeps plasma's lightness order, colour sequence and grayscale behaviour and adds the two Syracuse colours,
+viridisSYR keeps plasma's lightness order, colour sequence and grayscale behaviour and adds the two Syracuse colours,
 at the cost of less uniform steps than plasma. Use plasma where perceptual uniformity is the priority, and SYR where
 the Syracuse colours matter and the small loss of uniformity is acceptable.
 

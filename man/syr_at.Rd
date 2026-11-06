@@ -2,7 +2,7 @@
 % Please edit documentation in R/syr.R
 \name{syr_at}
 \alias{syr_at}
-\title{Colours at exact positions on the viridis-SYR scale}
+\title{Colours at exact positions on the viridisSYR scale}
 \usage{
 syr_at(position, alpha = 1)
 }

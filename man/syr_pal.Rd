@@ -2,7 +2,7 @@
 % Please edit documentation in R/syr.R
 \name{syr_pal}
 \alias{syr_pal}
-\title{Palette function for viridis-SYR}
+\title{Palette function for viridisSYR}
 \usage{
 syr_pal(alpha = 1, begin = 0, end = 1, direction = 1)
 }
@@ -20,7 +20,7 @@ A function of one argument (`n`) that returns `n` colours, for use
   with `scales`/`ggplot2`.
 }
 \description{
-Palette function for viridis-SYR
+Palette function for viridisSYR
 }
 \examples{
 pal <- syr_pal(begin = 0.1)
