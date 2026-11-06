@@ -11,11 +11,18 @@ An R package with one continuous colour scale in the [viridis](https://sjmgarnie
 anchored to Syracuse University colours. **viridisSYR** starts at Syracuse navy (`#000E54`), passes through the
 viridis *plasma* purple (`#7E03A8`) and Syracuse orange (`#F76700`), and ends at the plasma yellow (`#F0F921`).
 
-```{r bar, echo = FALSE}
-d <- data.frame(x = seq(0, 1, length.out = 256))
-ggplot(d, aes(x, 1, fill = x)) + geom_raster() + scale_fill_syr_c(guide = "none") +
-  scale_x_continuous(breaks = syr_keys()$position, expand = c(0, 0)) + scale_y_continuous(breaks = NULL) +
-  labs(x = NULL, y = NULL) + theme_minimal(base_size = 10) + theme(panel.grid = element_blank())
+```{r bar, echo = FALSE, fig.height = 1.8}
+x <- seq(0, 1, length.out = 256)
+cols <- syr(256)
+bars <- rbind(
+  data.frame(x = x, row = "colour", fill = cols),
+  data.frame(x = x, row = "grayscale", fill = grDevices::gray(cam02ucs(cols)$Jp / 100)))
+bars$row <- factor(bars$row, c("colour", "grayscale"))
+ggplot(bars, aes(x, row, fill = fill)) + geom_raster() + scale_fill_identity() +
+  scale_x_continuous(breaks = syr_keys()$position, expand = c(0, 0)) +
+  scale_y_discrete(limits = c("grayscale", "colour")) +
+  labs(x = NULL, y = NULL, caption = "Grayscale: perceptual lightness J' (CAM02-UCS)") +
+  theme_minimal(base_size = 10) + theme(panel.grid = element_blank(), plot.margin = margin(5, 16, 5, 5))
 ```
 
 Not affiliated with or endorsed by Syracuse University. The two Syracuse hex codes are used as published brand colours.
