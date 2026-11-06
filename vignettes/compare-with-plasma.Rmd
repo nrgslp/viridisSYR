@@ -1,0 +1,183 @@
+---
+title: "viridis-SYR compared with viridis plasma"
+author: "Nina R. Benway"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{viridis-SYR compared with viridis plasma}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 3, dpi = 110)
+library(viridisSYR)
+library(ggplot2)
+```
+
+# What viridis optimizes, and how it is measured here
+
+The viridis colour maps were designed by Smith and van der Walt (2015) for Matplotlib and are distributed in R
+by the viridis and viridisLite packages (Garnier et al., 2024). Their design criteria are:
+
+1. **Perceptual uniformity.** Equal steps in the data should look like equal steps in colour. This is measured
+   as the colour difference between neighbouring colours in the CAM02-UCS uniform colour space (Luo et al., 2006;
+   built on CIECAM02, Moroney et al., 2002). A perfectly uniform map has the same neighbour difference ΔE' at every step.
+2. **Ordered lightness.** Lightness J' rises monotonically from one end to the other. This is also what makes a
+   map readable in grayscale.
+3. **Colourfulness.** The map should span a wide range of hue and chroma.
+4. **Colour vision deficiency (CVD).** The map should stay ordered and discriminable under simulated
+   deuteranomaly, protanomaly and tritanomaly (Machado et al., 2009).
+
+`syr_metrics()` computes these for any scale, and `syr_compare()` compares scales (by default plasma and SYR).
+The CAM02-UCS conversion (`cam02ucs()`) is an independent implementation of the published equations for sRGB viewing
+conditions; the sanity checks are below. Everything here uses 256 colours per scale and complete (severity 1)
+colour-vision-deficiency simulation.
+
+```{r metrics}
+cmp <- syr_compare()
+show <- cmp[, c("scale", "deficiency", "J_start", "J_end", "J_range", "J_monotone", "J_min_step", "J_r2",
+                "dE_mean", "dE_cv", "dE_max_ratio", "chroma_mean", "hue_span")]
+num <- vapply(show, is.numeric, logical(1)); show[num] <- lapply(show[num], round, 3)
+show
+```
+
+# Sanity checks of the CAM02-UCS implementation
+
+Black has J' = 0 and white J' = 100, a gray ramp rises monotonically with little chroma, and viridis itself, the
+map these criteria were written for, comes out as designed: lightness rises monotonically and the neighbour
+differences are nearly constant.
+
+```{r sanity}
+round(cam02ucs(c("black", "white"))$Jp, 2)
+m_v <- syr_metrics(viridisLite::viridis(256), "none")
+c(J_monotone = m_v$J_monotone, J_r2 = round(m_v$J_r2, 4), dE_cv = round(m_v$dE_cv, 3))
+```
+
+# 1. Perceptual uniformity
+
+```{r uniform, fig.height=3.2}
+nd <- function(cols, nm) {
+  u <- cam02ucs(cols); data.frame(scale = nm, position = seq(0, 1, length.out = length(cols))[-1],
+                                  dE = sqrt(diff(u$Jp)^2 + diff(u$ap)^2 + diff(u$bp)^2))
+}
+d <- rbind(nd(viridisLite::plasma(256), "plasma"), nd(syr(256), "SYR"))
+ggplot(d, aes(position, dE, colour = scale)) + geom_line(linewidth = 0.7) +
+  scale_colour_manual(values = c(plasma = "#CC4678", SYR = "#000E54")) +
+  labs(x = "position on the scale", y = "ΔE' between neighbouring colours (CAM02-UCS)", colour = NULL) +
+  theme_minimal(base_size = 11)
+```
+
+```{r uniformtxt, echo=FALSE}
+p <- cmp[cmp$scale == "plasma" & cmp$deficiency == "none", ]; s <- cmp[cmp$scale == "SYR" & cmp$deficiency == "none", ]
+```
+
+Plasma's neighbour differences have a coefficient of variation of `r round(p$dE_cv, 2)` (largest step
+`r round(p$dE_max_ratio, 2)` times the mean). SYR's is `r round(s$dE_cv, 2)` (largest step `r round(s$dE_max_ratio, 2)`
+times the mean). SYR is therefore less uniform than plasma, which is expected: bending the scale through two fixed
+brand colours adds variation in step size. Steps are larger than plasma's across the navy-to-purple ramp (positions 0 to 0.25) and largest on the approach to the orange (about 0.5 to 0.625),
+and slightly smaller just after the purple. The variation is of the same order as plasma's, but SYR does not match plasma on this criterion.
+
+# 2. Ordered lightness and grayscale
+
+```{r lightness, fig.height=3}
+lj <- function(cols, nm) data.frame(scale = nm, position = seq(0, 1, length.out = length(cols)), Jp = cam02ucs(cols)$Jp)
+d <- rbind(lj(viridisLite::plasma(256), "plasma"), lj(syr(256), "SYR"))
+ggplot(d, aes(position, Jp, colour = scale)) + geom_line(linewidth = 0.8) +
+  scale_colour_manual(values = c(plasma = "#CC4678", SYR = "#000E54")) +
+  labs(x = "position on the scale", y = "lightness J' (CAM02-UCS)", colour = NULL) + theme_minimal(base_size = 11)
+```
+
+Both scales rise from dark to light. SYR starts darker (J' = `r round(s$J_start, 1)` against `r round(p$J_start, 1)` for plasma) and
+covers a larger lightness range (`r round(s$J_range, 1)` against `r round(p$J_range, 1)`). Lightness is nearly linear in position for
+both (R² = `r round(s$J_r2, 4)` for SYR and `r round(p$J_r2, 4)` for plasma). SYR is monotone within the rounding noise of 8-bit
+colours (the largest dip is `r round(s$J_min_step, 3)` J', well under the 0.15 that changing one sRGB channel by 1 produces).
+
+Grayscale conversions are shown below, from the perceptual lightness J' and from the Rec. 709 luma that most software uses:
+
+```{r gray, fig.height=2.4}
+gray_of <- function(cols, how) {
+  if (how == "luma") { m <- t(grDevices::col2rgb(cols)) / 255; g <- as.vector(m %*% c(.2126, .7152, .0722)) }
+  else { g <- cam02ucs(cols)$Jp / 100 }
+  grDevices::gray(pmin(pmax(g, 0), 1))
+}
+strips <- function(pals, hows) {
+  do.call(rbind, lapply(names(pals), function(nm) do.call(rbind, lapply(hows, function(h) {
+    cols <- if (h == "color") pals[[nm]] else gray_of(pals[[nm]], h)
+    data.frame(row = paste(nm, "-", h), x = seq(0, 1, length.out = length(cols)), col = cols)
+  }))))
+}
+st <- strips(list(plasma = viridisLite::plasma(256), SYR = syr(256)), c("color", "J'", "luma"))
+st$row <- factor(st$row, rev(unique(st$row)))
+ggplot(st, aes(x, row, fill = col)) + geom_raster() + scale_fill_identity() +
+  labs(x = "position on the scale", y = NULL) + theme_minimal(base_size = 10) + theme(panel.grid = element_blank())
+```
+
+# 3. Colourfulness
+
+SYR's mean chroma is `r round(s$chroma_mean, 1)` (plasma `r round(p$chroma_mean, 1)`) and its hue spans `r round(s$hue_span)`° (plasma
+`r round(p$hue_span)`°). Both run blue-violet, purple, pink, orange and yellow; SYR adds a more saturated orange.
+
+# 4. Colour vision deficiency
+
+```{r cvd, fig.height=3.2}
+cv <- do.call(rbind, lapply(c("none", "deutan", "protan", "tritan"), function(def) {
+  f <- switch(def, none = identity, deutan = function(x) colorspace::deutan(x, 1),
+              protan = function(x) colorspace::protan(x, 1), tritan = function(x) colorspace::tritan(x, 1))
+  rbind(data.frame(row = paste("plasma -", def), x = seq(0, 1, length.out = 256), col = f(viridisLite::plasma(256))),
+        data.frame(row = paste("SYR -", def), x = seq(0, 1, length.out = 256), col = f(syr(256))))
+}))
+cv$row <- factor(cv$row, rev(unique(cv$row)))
+ggplot(cv, aes(x, row, fill = col)) + geom_raster() + scale_fill_identity() +
+  labs(x = "position on the scale", y = NULL) + theme_minimal(base_size = 10) + theme(panel.grid = element_blank())
+```
+
+```{r cvdtab}
+cvd <- cmp[, c("scale", "deficiency", "J_monotone", "J_min_step", "dE_total", "dE_mean", "dE_cv")]
+cvd[sapply(cvd, is.numeric)] <- lapply(cvd[sapply(cvd, is.numeric)], round, 3)
+cvd
+```
+
+Under simulated CVD both scales lose some colour difference (`dE_total` falls) and become less uniform (`dE_cv` rises),
+as every colour map does. Lightness stays ordered for both within the quantization tolerance, so the order of the
+values remains readable. SYR's retained path length under each deficiency is
+`r paste0(round(100 * cmp$dE_total[cmp$scale == "SYR" & cmp$deficiency != "none"] / s$dE_total), "%", collapse = ", ")`
+of its normal-vision value for deutan, protan and tritan simulations; plasma's is
+`r paste0(round(100 * cmp$dE_total[cmp$scale == "plasma" & cmp$deficiency != "none"] / p$dE_total), "%", collapse = ", ")`.
+
+# Summary
+
+| Criterion | plasma | SYR |
+|:--|:--|:--|
+| Lightness order (J′ monotone, within 8-bit noise) | yes | yes |
+| Lightness range | `r round(p$J_range, 1)` | `r round(s$J_range, 1)` |
+| Uniform steps (CV of neighbour ΔE′; lower is more uniform) | `r round(p$dE_cv, 2)` | `r round(s$dE_cv, 2)` |
+| Mean chroma | `r round(p$chroma_mean, 1)` | `r round(s$chroma_mean, 1)` |
+| Passes through Syracuse navy and orange exactly | no | yes |
+
+viridis-SYR keeps plasma's lightness order, colour sequence and grayscale behaviour and adds the two Syracuse colours,
+at the cost of less uniform steps than plasma. Use plasma where perceptual uniformity is the priority, and SYR where
+the Syracuse colours matter and the small loss of uniformity is acceptable.
+
+# References
+
+Garnier, S., Ross, N., Rudis, R., Camargo, P. A., Sciaini, M., & Scherer, C. (2024). *viridis(Lite): Colorblind-friendly
+color maps for R* [R package]. <https://sjmgarnier.github.io/viridis/>
+
+Luo, M. R., Cui, G., & Li, C. (2006). Uniform colour spaces based on the CIECAM02 colour appearance model.
+*Color Research & Application, 31*(4), 320-330.
+
+Machado, G. M., Oliveira, M. M., & Fernandes, L. A. F. (2009). A physiologically-based model for simulation of
+color vision deficiency. *IEEE Transactions on Visualization and Computer Graphics, 15*(6), 1291-1298.
+
+Moroney, N., Fairchild, M. D., Hunt, R. W. G., Li, C., Luo, M. R., & Newman, T. (2002). The CIECAM02 color appearance
+model. *IS&T/SID 10th Color Imaging Conference*, 23-27.
+
+Ottosson, B. (2020). *A perceptual color space for image processing.* <https://bottosson.github.io/posts/oklab/>
+
+Smith, N., & van der Walt, S. (2015). *A better default colormap for Matplotlib* [Conference presentation]. SciPy 2015,
+Austin, TX.
+
+Zeileis, A., Fisher, J. C., Hornik, K., Ihaka, R., McWhite, C. D., Murrell, P., Stauffer, R., & Wilke, C. O. (2020).
+colorspace: A toolbox for manipulating and assessing colors and palettes. *Journal of Statistical Software, 96*(1), 1-49.
+(Used for the colour vision deficiency simulations.)

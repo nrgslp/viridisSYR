@@ -1,0 +1,185 @@
+---
+title: "Using viridis-SYR"
+author: "Nina R. Benway"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using viridis-SYR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 3.2, dpi = 110)
+library(viridisSYR)
+library(ggplot2)
+set.seed(1)
+```
+
+**viridis-SYR** is a continuous colour scale in the viridis family. It starts at Syracuse University navy,
+passes through the viridis 'plasma' purple and Syracuse University orange, and ends at the plasma yellow.
+This vignette shows, with toy data, how to (1) get the Syracuse colours directly from the scale, (2) use the
+gradient in plots, and (3) call the colours closest to the plasma key colours. The comparison with
+plasma on viridis' own design criteria is in `vignette("compare-with-plasma")`.
+
+# The scale and its key colours
+
+Four colours define the scale: two Syracuse brand colours and two plasma colours.
+
+```{r keys}
+syr_keys()
+```
+
+```{r bar, fig.height=1.3}
+bar <- data.frame(x = seq(0, 1, length.out = 256))
+ggplot(bar, aes(x, 1, fill = x)) + geom_raster() + scale_fill_syr_c(guide = "none") +
+  geom_vline(xintercept = syr_keys()$position, colour = "white", linewidth = 0.4) +
+  scale_x_continuous(breaks = syr_keys()$position, expand = c(0, 0)) +
+  scale_y_continuous(breaks = NULL) + labs(x = "position on the scale", y = NULL) +
+  theme_minimal(base_size = 11) + theme(panel.grid = element_blank())
+```
+
+# 1. Get the Syracuse colours directly from the scale
+
+`syr_su()` returns the two Syracuse colours as they appear on the scale. They are exactly the brand hex codes.
+
+```{r su}
+syr_su()
+syr_su("orange")
+```
+
+You can also reach them by position with `syr_at()`, which returns the colour at any point from 0 to 1.
+
+```{r at}
+syr_at(c(0, 0.673))          # navy and orange, by position
+syr_at(syr_keys()$position)  # all four key colours
+identical(unname(syr_su()), syr_at(c(0, 0.673)))
+```
+
+**Which data value is drawn in Syracuse orange?** A continuous scale maps the lowest value to position 0 and
+the highest to position 1. `syr_value_at()` returns the data value that lands on a key colour, given the limits of
+your colour scale.
+
+```{r valueat}
+syr_value_at(c("su_navy", "su_orange"), limits = c(0, 100))   # test scores from 0 to 100
+syr_value_at("su_orange", limits = c(-3, 3))                  # a z-score scale
+```
+
+Toy example: a score surface with the contour that is drawn exactly in Syracuse orange.
+
+```{r heat}
+d <- expand.grid(x = seq(0, 10, length.out = 120), y = seq(0, 10, length.out = 120))
+d$score <- 100 * plogis(0.9 * (d$x - 5) + 0.5 * (d$y - 5)) # toy data, 0 to 100
+orange_value <- syr_value_at("su_orange", limits = c(0, 100))
+
+ggplot(d, aes(x, y, fill = score)) +
+  geom_raster() +
+  geom_contour(aes(z = score), breaks = orange_value, colour = "white", linewidth = 0.5) +
+  scale_fill_syr_c(limits = c(0, 100), breaks = c(0, 25, 50, orange_value, 100),
+                   labels = c(0, 25, 50, sprintf("%.1f (SU orange)", orange_value), 100)) +
+  coord_equal(expand = FALSE) + labs(fill = "Score") + theme_minimal(base_size = 11)
+```
+
+Check that the tiles at that value really are `#F76700`:
+
+```{r check}
+b <- ggplot_build(ggplot(data.frame(v = c(0, orange_value, 100), y = 1), aes(v, y, fill = v)) +
+                    geom_tile() + scale_fill_syr_c(limits = c(0, 100)))
+toupper(b$data[[1]]$fill)
+```
+
+# 2. Use the gradient
+
+## Continuous fill and colour
+
+```{r points}
+n <- 150
+pts <- data.frame(dose = runif(n, 0, 10))
+pts$response <- 2 + 0.8 * pts$dose + rnorm(n, sd = 1.5)
+pts$severity <- pts$response + rnorm(n, sd = 1)      # toy variable for colour
+
+ggplot(pts, aes(dose, response, colour = severity)) +
+  geom_point(size = 2.2) + scale_colour_syr_c() + theme_minimal(base_size = 11)
+```
+
+## Part of the scale, reversed, transparent
+
+`begin`, `end`, `direction` and `alpha` work as in `viridis`. Using `begin = 0.25` starts at the plasma purple, which
+is useful on a dark background where navy would disappear.
+
+```{r partial}
+ggplot(pts, aes(dose, response, colour = severity)) +
+  geom_point(size = 2.2) + scale_colour_syr_c(begin = 0.25, direction = -1, alpha = 0.8) +
+  theme_minimal(base_size = 11)
+```
+
+## Categorical data
+
+For four classes in exactly the four key colours (navy, purple, orange, yellow), pass them to `scale_*_manual()`.
+
+```{r manual}
+grp <- data.frame(group = rep(c("A", "B", "C", "D"), each = 30), value = rnorm(120, rep(c(0, 1, 2, 3), each = 30)))
+ggplot(grp, aes(group, value, fill = group)) + geom_boxplot() +
+  scale_fill_manual(values = syr_keys()$hex) + theme_minimal(base_size = 11)
+```
+
+For any number of classes sampled evenly along the scale, use `scale_*_syr_d()`. The end of the scale is pale, so
+`end = 0.9` keeps the last class legible on white.
+
+```{r discrete}
+ggplot(mpg, aes(displ, hwy, colour = factor(cyl))) + geom_point(size = 2) +
+  scale_colour_syr_d(end = 0.9, name = "Cylinders") + theme_minimal(base_size = 11)
+```
+
+## Base graphics
+
+```{r base, fig.height=3}
+barplot(c(3, 5, 4, 6, 2), col = syr(5), names.arg = c("navy", "purple", "pink", "orange", "yellow"), border = NA)
+image(matrix(1:100, 10), col = syr(100), axes = FALSE)
+```
+
+# 3. Colours closest to the plasma key colours
+
+Viridis 'plasma' is usually shown by its five key colours, `viridisLite::plasma(5)`, at positions 0, 0.25, 0.5, 0.75
+and 1. `syr_plasma_keys()` finds, for each, the colour on the SYR scale that is closest to it in CAM02-UCS (the
+colour space viridis was designed in), the colour difference ΔE' between them, and the code that returns that colour.
+
+```{r plasmakeys}
+pk <- syr_plasma_keys()
+pk[, c("plasma_position", "plasma_hex", "closest_position", "closest_hex", "closest_dE", "call")]
+```
+
+The purple (0.25) and the yellow (1) are plasma's own colours, so ΔE' is 0. The pink (0.5) is within about one
+ΔE' of plasma's pink. The two ends differ because they are where the Syracuse colours are: plasma's deep
+blue-violet start is replaced by Syracuse navy (the closest SYR colour is a navy at about 0.06), and plasma's orange
+(`#F89441`) is a lighter, less saturated orange than Syracuse orange (the closest is at about 0.76).
+
+Call them directly:
+
+```{r direct}
+syr_at(pk$closest_position)                   # the five closest colours
+syr_at(0.057)                                 # closest to plasma's #0D0887
+pk$same_position_hex                          # SYR colour at the same position, for comparison
+```
+
+```{r swatch, fig.height=2.2}
+sw <- rbind(
+  data.frame(row = "plasma", x = pk$plasma_position, hex = pk$plasma_hex),
+  data.frame(row = "SYR, closest colour", x = pk$plasma_position, hex = pk$closest_hex),
+  data.frame(row = "SYR, same position", x = pk$plasma_position, hex = pk$same_position_hex))
+sw$row <- factor(sw$row, rev(c("plasma", "SYR, closest colour", "SYR, same position")))
+ggplot(sw, aes(x, row, fill = hex)) + geom_tile(width = 0.18, height = 0.8, colour = "white") +
+  geom_text(aes(label = hex), size = 2.8, colour = "grey15", nudge_y = 0) +
+  scale_fill_identity() + scale_x_continuous(breaks = pk$plasma_position) +
+  labs(x = "plasma key position", y = NULL) + theme_minimal(base_size = 11) + theme(panel.grid = element_blank())
+```
+
+# Reproducing the colour map
+
+The scale is stored as a fixed map (`syr.map`, 1001 colours), so it does not depend on the installed version of
+viridisLite. `syr_build()` rebuilds it from the construction described in `?syr_build`.
+
+```{r build}
+identical(syr_build(), syr.map$hex)
+head(syr.map, 3)
+```
