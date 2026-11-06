@@ -82,7 +82,8 @@ scale_fill_syr_d(
 `#RRGGBBAA`.}
 
 \item{begin, end}{Positions on the scale (0 to 1) where the palette starts and
-ends. Use them to use only part of the scale.}
+ends. Use them to use only part of the scale; `begin = 0.05` starts at the
+plasma start colour instead of Syracuse navy.}
 
 \item{direction}{`1` (default) goes navy to yellow; `-1` reverses.}
 
@@ -101,11 +102,12 @@ Continuous (`_c`) and discrete (`_d`) colour and fill scales using
 `scale_colour_viridis_d()`.
 }
 \details{
-With the continuous scale, Syracuse orange is drawn at 0.673 of the way from
+With the continuous scale, Syracuse orange is drawn at 0.689 of the way from
 the lowest to the highest value (use [syr_value_at()] to get that data
 value). With the discrete scale, `n` classes are spread evenly over
-`begin`-`end`; for four classes in the exact key colours use
-`scale_*_manual(values = syr_keys()$hex)`.
+`begin`-`end`; for classes in exact key colours use
+`scale_*_manual(values = syr_keys()$hex[-2])` (navy, purple, orange, yellow). Use
+`begin = 0.05` to start at the plasma start colour (`#0D0887`) instead of navy.
 }
 \examples{
 library(ggplot2)

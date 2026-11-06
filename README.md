@@ -4,7 +4,8 @@
 
 An R package with one continuous colour scale in the [viridis](https://sjmgarnier.github.io/viridis/) family,
 anchored to Syracuse University colours. **viridisSYR** starts at Syracuse navy (`#000E54`), passes through the
-viridis *plasma* purple (`#7E03A8`) and Syracuse orange (`#F76700`), and ends at the plasma yellow (`#F0F921`).
+viridis *plasma* start colour (`#0D0887`) and purple (`#7E03A8`) and then Syracuse orange (`#F76700`), and ends at the
+plasma yellow (`#F0F921`).
 
 ![plot of chunk bar](man/figures/README-bar-1.png)
 
@@ -24,21 +25,22 @@ remotes::install_github("nrgslp/viridisSYR")
 library(viridisSYR)
 
 syr(5)                   # n colours, like viridisLite::viridis()
-#> [1] "#000E54" "#7E03A8" "#CE4171" "#FF8600" "#F0F921"
+#> [1] "#000E54" "#6F00A8" "#C63E7B" "#FF8100" "#F0F921"
 syr_keys()               # the four defining colours and their positions
 #>              key position     hex                     origin
-#> 1        su_navy    0.000 #000E54   Syracuse University navy
-#> 2 viridis_purple    0.250 #7E03A8       viridis plasma(5)[2]
-#> 3      su_orange    0.673 #F76700 Syracuse University orange
-#> 4 viridis_yellow    1.000 #F0F921       viridis plasma(5)[5]
+#> 1        su_navy   0.0000 #000E54   Syracuse University navy
+#> 2  viridis_start   0.0500 #0D0887       viridis plasma(5)[1]
+#> 3 viridis_purple   0.2875 #7E03A8       viridis plasma(5)[2]
+#> 4      su_orange   0.6890 #F76700 Syracuse University orange
+#> 5 viridis_yellow   1.0000 #F0F921       viridis plasma(5)[5]
 syr_su()                 # the Syracuse colours, taken from the scale
 #>      navy    orange 
 #> "#000E54" "#F76700"
-syr_at(0.673)            # the colour at any position from 0 to 1
+syr_at(0.689)            # the colour at any position from 0 to 1
 #> [1] "#F76700"
 syr_value_at("su_orange", limits = c(0, 100))   # data value drawn in Syracuse orange
 #> su_orange 
-#>      67.3
+#>      68.9
 ```
 
 In ggplot2:
@@ -53,12 +55,12 @@ The colours closest to the plasma key colours, and the code that returns them:
 
 ``` r
 syr_plasma_keys()[, c("plasma_position", "plasma_hex", "closest_hex", "closest_dE", "call")]
-#>   plasma_position plasma_hex closest_hex closest_dE          call
-#> 1            0.00    #0D0887     #14115F   6.646121 syr_at(0.057)
-#> 2            0.25    #7E03A8     #7E03A8   0.000000 syr_at(0.250)
-#> 3            0.50    #CC4678     #CB4274   1.086601 syr_at(0.496)
-#> 4            0.75    #F89441     #FF8B00   5.677482 syr_at(0.759)
-#> 5            1.00    #F0F921     #F0F921   0.000000 syr_at(1.000)
+#>   plasma_position plasma_hex closest_hex closest_dE           call
+#> 1            0.00    #0D0887     #0D0887   0.000000 syr_at(0.0500)
+#> 2            0.25    #7E03A8     #7E03A8   0.000000 syr_at(0.2875)
+#> 3            0.50    #CC4678     #CC4274   1.076254 syr_at(0.5210)
+#> 4            0.75    #F89441     #FF8B00   5.677482 syr_at(0.7710)
+#> 5            1.00    #F0F921     #F0F921   0.000000 syr_at(1.0000)
 ```
 
 ## Compared with plasma
@@ -72,7 +74,7 @@ cmp <- syr_compare(deficiency = "none")
 cmp[, c("scale", "J_start", "J_end", "J_monotone", "J_r2", "dE_cv", "chroma_mean")]
 #>    scale  J_start    J_end J_monotone      J_r2     dE_cv chroma_mean
 #> 1 plasma 16.79188 95.02259       TRUE 0.9999803 0.2619489    31.13873
-#> 2    SYR 11.45959 95.02259       TRUE 0.9941563 0.3547590    31.94995
+#> 2    SYR 11.45959 95.02259       TRUE 0.9990468 0.3160036    32.58242
 ```
 
 SYR keeps plasma's lightness order and colour sequence but is less uniform than plasma (`dE_cv` is the
@@ -82,9 +84,9 @@ is bent through two fixed colours. See `vignette("compare-with-plasma")` for the
 
 ## How the colours are defined
 
-The scale is a fixed 1001-colour map (`syr.map`). It is the plasma map with two changes made in OKLab: the blue-violet
-start (position 0 to 0.25) is replaced by a smooth ramp from Syracuse navy to the plasma purple, and a smooth offset
-centred at 0.673 (where plasma is closest to Syracuse orange) makes the scale pass exactly through `#F76700`.
+The scale is a fixed 2001-colour map (`syr.map`). It is the plasma map with two changes made in OKLab: a short lead-in from
+Syracuse navy to plasma's own start colour (positions 0 to 0.05, with plasma compressed into 0.05 to 1), and a smooth offset
+centred at 0.689 (where plasma is closest to Syracuse orange) that makes the scale pass exactly through `#F76700`.
 `syr_build()` regenerates the map; `data-raw/syr.map.R` writes it.
 
 ## References

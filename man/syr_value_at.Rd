@@ -7,8 +7,8 @@
 syr_value_at(key, limits = c(0, 1), begin = 0, end = 1, direction = 1)
 }
 \arguments{
-\item{key}{One or more of `"su_navy"`, `"viridis_purple"`, `"su_orange"`,
-`"viridis_yellow"`.}
+\item{key}{One or more of `"su_navy"`, `"viridis_start"`, `"viridis_purple"`,
+`"su_orange"`, `"viridis_yellow"`.}
 
 \item{limits}{Length-2 numeric vector: the data values at the two ends of the
 colour scale (default `c(0, 1)`).}

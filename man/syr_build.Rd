@@ -8,7 +8,7 @@ syr_build(n = .syr$n)
 }
 \arguments{
 \item{n}{Number of colours (positions `seq(0, 1, length.out = n)`). The key
-positions are only exactly on the grid for `n = 1001`.}
+positions are only exactly on the grid for `n = 2001`.}
 }
 \value{
 A character vector of hex colours.
@@ -21,15 +21,16 @@ depend on the installed version of 'viridisLite'.
 \details{
 The map is the viridis 'plasma' map with two changes, made in the OKLab
 colour space (Ottosson, 2020):
-1. From position 0 to 0.25, plasma's blue-violet start is replaced by a
-   smooth (smoothstep) ramp from Syracuse navy to the plasma purple at 0.25.
-2. Around position 0.673 an offset is added, with cosine-squared falloff and a
-   half-width of 0.25, equal to (Syracuse orange minus plasma) at its centre,
-   so the scale passes exactly through Syracuse orange there. The offset is
-   zero at 0.423 and below and at 0.923 and above, so the plasma purple at
-   0.25 and the plasma yellow at 1 are unchanged.
+1. A lead-in from position 0 to 0.05 runs at constant speed from Syracuse
+   navy to plasma's first colour (`#0D0887`). Plasma itself is compressed into
+   positions 0.05 to 1, so its purple (`#7E03A8`) is at 0.2875.
+2. Around position 0.689 an offset is added, with cosine-squared falloff and a
+   half-width of 0.2375, equal to (Syracuse orange minus the compressed plasma
+   colour) at its centre, so the scale passes exactly through Syracuse orange
+   there. The offset is zero below 0.4515 and above 0.9265, so the plasma
+   purple and the plasma yellow at 1 are unchanged.
 
-Out-of-gamut values are clipped to sRGB, and the four key colours are set to
+Out-of-gamut values are clipped to sRGB, and the five key colours are set to
 their exact hex values.
 }
 \examples{

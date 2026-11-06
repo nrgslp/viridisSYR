@@ -19,6 +19,6 @@ Returns the colour at any position between 0 (navy end) and 1 (yellow end).
 Use [syr_keys()] for the positions of the Syracuse and viridis key colours.
 }
 \examples{
-syr_at(c(0, 0.25, 0.673, 1))
+syr_at(c(0, 0.05, 0.2875, 0.689, 1))
 syr_at(syr_keys()$position)
 }

@@ -31,7 +31,11 @@ test_that("syr_compare and syr_plasma_keys return the documented shapes", {
   expect_true(all(cmp$J_monotone[cmp$deficiency == "none"]))
   k <- syr_plasma_keys()
   expect_equal(nrow(k), 5)
-  expect_equal(k$closest_hex[c(2, 5)], c("#7E03A8", "#F0F921"))
-  expect_equal(k$closest_dE[c(2, 5)], c(0, 0), tolerance = 1e-6)
+  # plasma start, purple and yellow are exact; pink is close
+  expect_equal(k$closest_hex[c(1, 2, 5)], c("#0D0887", "#7E03A8", "#F0F921"))
+  expect_equal(k$closest_dE[c(1, 2, 5)], c(0, 0, 0), tolerance = 1e-6)
+  expect_equal(k$closest_position[c(1, 2, 5)], c(0.05, 0.2875, 1))
+  expect_lt(k$closest_dE[3], 2)
+  expect_equal(k$equivalent_position, 0.05 + 0.95 * c(0, 0.25, 0.5, 0.75, 1))
   expect_equal(syr_at(k$closest_position), k$closest_hex)
 })

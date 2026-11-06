@@ -4,11 +4,12 @@
 #' [syr()]. The interface follows `ggplot2::scale_colour_viridis_c()` and
 #' `scale_colour_viridis_d()`.
 #'
-#' With the continuous scale, Syracuse orange is drawn at 0.673 of the way from
+#' With the continuous scale, Syracuse orange is drawn at 0.689 of the way from
 #' the lowest to the highest value (use [syr_value_at()] to get that data
 #' value). With the discrete scale, `n` classes are spread evenly over
-#' `begin`-`end`; for four classes in the exact key colours use
-#' `scale_*_manual(values = syr_keys()$hex)`.
+#' `begin`-`end`; for classes in exact key colours use
+#' `scale_*_manual(values = syr_keys()$hex[-2])` (navy, purple, orange, yellow). Use
+#' `begin = 0.05` to start at the plasma start colour (`#0D0887`) instead of navy.
 #'
 #' @inheritParams syr
 #' @param ... Passed to [ggplot2::continuous_scale()] or

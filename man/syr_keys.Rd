@@ -11,10 +11,11 @@ A data frame with columns `key`, `position` (0 to 1), `hex` and
   `origin`.
 }
 \description{
-The four colours that define the scale and their positions: two Syracuse
-University brand colours and two viridis 'plasma' colours.
+The five colours that define the scale and their positions: two Syracuse
+University brand colours and three viridis 'plasma' colours (its start,
+purple and yellow).
 }
 \examples{
 syr_keys()
-syr_keys()$hex                      # a 4-class categorical palette
+syr_keys()$hex[-2]                  # navy, purple, orange, yellow: a 4-class palette
 }

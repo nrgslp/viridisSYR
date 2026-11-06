@@ -75,8 +75,8 @@ p <- cmp[cmp$scale == "plasma" & cmp$deficiency == "none", ]; s <- cmp[cmp$scale
 Plasma's neighbour differences have a coefficient of variation of `r round(p$dE_cv, 2)` (largest step
 `r round(p$dE_max_ratio, 2)` times the mean). SYR's is `r round(s$dE_cv, 2)` (largest step `r round(s$dE_max_ratio, 2)`
 times the mean). SYR is therefore less uniform than plasma, which is expected: bending the scale through two fixed
-brand colours adds variation in step size. Steps are larger than plasma's across the navy-to-purple ramp (positions 0 to 0.25) and largest on the approach to the orange (about 0.5 to 0.625),
-and slightly smaller just after the purple. The variation is of the same order as plasma's, but SYR does not match plasma on this criterion.
+brand colours adds variation in step size. Steps are larger than plasma's in the navy lead-in (positions 0 to 0.05) and largest on the approach to the orange (about 0.5 to 0.625), and
+close to plasma's elsewhere. The variation is of the same order as plasma's, but SYR does not match plasma on this criterion.
 
 # 2. Ordered lightness and grayscale
 

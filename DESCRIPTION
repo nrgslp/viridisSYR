@@ -1,13 +1,14 @@
 Package: viridisSYR
 Type: Package
 Title: Syracuse-Anchored Variant of the Viridis 'Plasma' Colour Scale
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     person("Nina R.", "Benway", , "53921196+nrgslp@users.noreply.github.com", role = c("aut", "cre"))
 Description: A continuous colour scale in the viridis family that starts at
     Syracuse University navy (#000E54), passes through the viridis 'plasma'
-    purple, then through Syracuse University orange (#F76700), and ends at the
-    viridis 'plasma' yellow. The scale is codified as a fixed 1001-colour map,
+    start colour (#0D0887) and purple, then through Syracuse University orange
+    (#F76700), and ends at the viridis 'plasma' yellow. The scale is codified as a
+    fixed 2001-colour map,
     so the Syracuse colours can be retrieved directly from it. Includes
     'ggplot2' scales, functions that return the colours (and the data values)
     at the key points, and tools to evaluate the scale with the criteria used

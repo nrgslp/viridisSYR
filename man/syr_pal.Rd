@@ -11,7 +11,8 @@ syr_pal(alpha = 1, begin = 0, end = 1, direction = 1)
 `#RRGGBBAA`.}
 
 \item{begin, end}{Positions on the scale (0 to 1) where the palette starts and
-ends. Use them to use only part of the scale.}
+ends. Use them to use only part of the scale; `begin = 0.05` starts at the
+plasma start colour instead of Syracuse navy.}
 
 \item{direction}{`1` (default) goes navy to yellow; `-1` reverses.}
 }
@@ -23,6 +24,6 @@ A function of one argument (`n`) that returns `n` colours, for use
 Palette function for viridisSYR
 }
 \examples{
-pal <- syr_pal(begin = 0.1)
+pal <- syr_pal(begin = 0.05)
 pal(4)
 }

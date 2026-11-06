@@ -1,22 +1,23 @@
-test_that("the four key colours are exact and at the documented positions", {
+test_that("the five key colours are exact and at the documented positions", {
   k <- syr_keys()
-  expect_equal(k$key, c("su_navy", "viridis_purple", "su_orange", "viridis_yellow"))
-  expect_equal(k$position, c(0, 0.25, 0.673, 1))
-  expect_equal(k$hex, c("#000E54", "#7E03A8", "#F76700", "#F0F921"))
+  expect_equal(k$key, c("su_navy", "viridis_start", "viridis_purple", "su_orange", "viridis_yellow"))
+  expect_equal(k$position, c(0, 0.05, 0.2875, 0.689, 1))
+  expect_equal(k$hex, c("#000E54", "#0D0887", "#7E03A8", "#F76700", "#F0F921"))
   expect_equal(syr_su(), c(navy = "#000E54", orange = "#F76700"))
   expect_equal(syr_su("orange"), c(orange = "#F76700"))
 })
 
-test_that("the purple and yellow keys are the viridis plasma colours", {
+test_that("the plasma start, purple and yellow keys are the viridis plasma colours", {
   pl <- substr(viridisLite::plasma(5), 1, 7)
-  expect_equal(syr_at(0.25), pl[2])
+  expect_equal(syr_at(0.05), pl[1])
+  expect_equal(syr_at(0.2875), pl[2])
   expect_equal(syr_at(1), pl[5])
 })
 
 test_that("the shipped map equals its construction", {
   expect_identical(syr_build(), viridisSYR::syr.map$hex)
-  expect_equal(nrow(viridisSYR::syr.map), 1001)
-  expect_equal(viridisSYR::syr.map$position[c(1, 251, 674, 1001)], c(0, 0.25, 0.673, 1))
+  expect_equal(nrow(viridisSYR::syr.map), 2001)
+  expect_equal(viridisSYR::syr.map$position[c(1, 101, 576, 1379, 2001)], c(0, 0.05, 0.2875, 0.689, 1))
 })
 
 test_that("syr() behaves like viridis()", {
@@ -24,7 +25,8 @@ test_that("syr() behaves like viridis()", {
   expect_equal(syr(0), character(0))
   expect_equal(syr(2), c("#000E54", "#F0F921"))
   expect_equal(syr(5, direction = -1), rev(syr(5)))
-  expect_equal(syr(3, begin = 0.25, end = 1)[c(1, 3)], c("#7E03A8", "#F0F921"))
+  expect_equal(syr(3, begin = 0.05, end = 1)[c(1, 3)], c("#0D0887", "#F0F921"))
+  expect_equal(syr(5, begin = 0.05, end = 0.9)[1], "#0D0887")        # the override that starts at the plasma start colour
   expect_match(syr(3, alpha = 0.5), "^#[0-9A-F]{6}80$")
   expect_error(syr(3, begin = -1))
   expect_error(syr(3, direction = 2))
@@ -33,10 +35,11 @@ test_that("syr() behaves like viridis()", {
 
 test_that("syr_value_at returns the data value drawn in a key colour", {
   v <- syr_value_at(c("su_navy", "su_orange"), limits = c(0, 100))
-  expect_equal(unname(v), c(0, 67.3))
+  expect_equal(unname(v), c(0, 68.9))
   expect_equal(syr_at(unname(v) / 100)[2], "#F76700")
-  # reversed scale: orange is at 1 - 0.673 of the way
-  expect_equal(unname(syr_value_at("su_orange", c(0, 1), direction = -1)), 1 - 0.673)
+  # reversed scale: orange is at 1 - 0.689 of the way
+  expect_equal(unname(syr_value_at("su_orange", c(0, 1), direction = -1)), 1 - 0.689)
+  expect_equal(unname(syr_value_at("viridis_start", c(0, 1))), 0.05)
   expect_error(syr_value_at("su_navy", begin = 0.25))
   expect_error(syr_value_at("not_a_key"))
 })

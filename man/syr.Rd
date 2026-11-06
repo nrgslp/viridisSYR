@@ -13,7 +13,8 @@ syr(n, alpha = 1, begin = 0, end = 1, direction = 1)
 `#RRGGBBAA`.}
 
 \item{begin, end}{Positions on the scale (0 to 1) where the palette starts and
-ends. Use them to use only part of the scale.}
+ends. Use them to use only part of the scale; `begin = 0.05` starts at the
+plasma start colour instead of Syracuse navy.}
 
 \item{direction}{`1` (default) goes navy to yellow; `-1` reverses.}
 }
@@ -22,15 +23,16 @@ A character vector of hex colours.
 }
 \description{
 `syr()` returns `n` colours from the viridisSYR scale: Syracuse University
-navy (`#000E54`) at position 0, the viridis 'plasma' purple (`#7E03A8`) at
-0.25, Syracuse University orange (`#F76700`) at 0.673, and the viridis
-'plasma' yellow (`#F0F921`) at 1, with smooth transitions between them
-(see [syr_build()]). The interface follows [viridisLite::viridis()].
+navy (`#000E54`) at position 0, the first colour of viridis 'plasma'
+(`#0D0887`) at 0.05, the plasma purple (`#7E03A8`) at 0.2875, Syracuse
+University orange (`#F76700`) at 0.689, and the plasma yellow (`#F0F921`) at
+1, with smooth transitions between them (see [syr_build()]). The interface
+follows [viridisLite::viridis()].
 }
 \examples{
 syr(5)
 syr(256)[c(1, 256)]
-syr(3, begin = 0.25, end = 1)
+syr(5, begin = 0.05, end = 0.9)     # starts at the plasma start colour, not navy
 syr(5, direction = -1)
 }
 \seealso{

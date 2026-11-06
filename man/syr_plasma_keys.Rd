@@ -9,15 +9,21 @@ syr_plasma_keys()
 \value{
 A data frame with one row per plasma key colour: `plasma_position`,
   `plasma_hex`, `closest_position`, `closest_hex`, `closest_dE` (\eqn{\Delta E'}
-  between them), `same_position_hex`, `same_position_dE`, and `call`.
+  between them), `equivalent_position`, `equivalent_hex`, `equivalent_dE`, and
+  `call`.
 }
 \description{
 The five key colours of viridis 'plasma' are `viridisLite::plasma(5)`:
-`#0D0887`, `#7E03A8`, `#CC4678`, `#F89441` and `#F0F921` at positions 0,
-0.25, 0.5, 0.75 and 1. For each, this finds the colour on the viridisSYR
-scale that is closest in CAM02-UCS (smallest \eqn{\Delta E'}), and also reports
-the SYR colour at the same position. The `call` column gives the code that
-returns the closest colour directly.
+`#0D0887`, `#7E03A8`, `#CC4678`, `#F89441` and `#F0F921` at plasma positions 0,
+0.25, 0.5, 0.75 and 1. viridisSYR compresses plasma into positions 0.05 to 1,
+so plasma position `s` falls at `0.05 + 0.95 * s` on the viridisSYR scale
+(`equivalent_position`). For each key colour this finds the colour on the
+viridisSYR scale that is closest in CAM02-UCS (smallest \eqn{\Delta E'}), and
+also reports the viridisSYR colour at the equivalent position. The `call`
+column gives the code that returns the closest colour directly. The plasma
+start, purple and yellow are exact (\eqn{\Delta E'} = 0); the pink is close, and
+the plasma orange differs most because the scale is bent through Syracuse
+orange there.
 }
 \examples{
 syr_plasma_keys()

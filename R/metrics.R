@@ -111,35 +111,42 @@ syr_compare <- function(..., deficiency = c("none", "deutan", "protan", "tritan"
 #' SYR colours closest to the viridis 'plasma' key colours
 #'
 #' The five key colours of viridis 'plasma' are `viridisLite::plasma(5)`:
-#' `#0D0887`, `#7E03A8`, `#CC4678`, `#F89441` and `#F0F921` at positions 0,
-#' 0.25, 0.5, 0.75 and 1. For each, this finds the colour on the viridisSYR
-#' scale that is closest in CAM02-UCS (smallest \eqn{\Delta E'}), and also reports
-#' the SYR colour at the same position. The `call` column gives the code that
-#' returns the closest colour directly.
+#' `#0D0887`, `#7E03A8`, `#CC4678`, `#F89441` and `#F0F921` at plasma positions 0,
+#' 0.25, 0.5, 0.75 and 1. viridisSYR compresses plasma into positions 0.05 to 1,
+#' so plasma position `s` falls at `0.05 + 0.95 * s` on the viridisSYR scale
+#' (`equivalent_position`). For each key colour this finds the colour on the
+#' viridisSYR scale that is closest in CAM02-UCS (smallest \eqn{\Delta E'}), and
+#' also reports the viridisSYR colour at the equivalent position. The `call`
+#' column gives the code that returns the closest colour directly. The plasma
+#' start, purple and yellow are exact (\eqn{\Delta E'} = 0); the pink is close, and
+#' the plasma orange differs most because the scale is bent through Syracuse
+#' orange there.
 #'
 #' @return A data frame with one row per plasma key colour: `plasma_position`,
 #'   `plasma_hex`, `closest_position`, `closest_hex`, `closest_dE` (\eqn{\Delta E'}
-#'   between them), `same_position_hex`, `same_position_dE`, and `call`.
+#'   between them), `equivalent_position`, `equivalent_hex`, `equivalent_dE`, and
+#'   `call`.
 #' @examples
 #' syr_plasma_keys()
 #' syr_at(syr_plasma_keys()$closest_position)    # call them directly
 #' @export
 syr_plasma_keys <- function() {
   pos <- c(0, 0.25, 0.5, 0.75, 1)
+  equiv <- .syr$start_at + (1 - .syr$start_at) * pos
   pl  <- viridisLite::plasma(5)
   m   <- viridisSYR::syr.map
   u_map <- cam02ucs(m$hex); u_pl <- cam02ucs(pl)
   closest <- vapply(seq_along(pos), function(i) {
     d <- sqrt((u_map$Jp - u_pl$Jp[i])^2 + (u_map$ap - u_pl$ap[i])^2 + (u_map$bp - u_pl$bp[i])^2)
-    near <- which(d <= min(d) + 0.05)              # colours that are indistinguishable from the best match
-    near[which.min(abs(m$position[near] - pos[i]))]  # ... take the one nearest the plasma position
+    near <- which(d <= min(d) + 0.05)                  # colours indistinguishable from the best match
+    near[which.min(abs(m$position[near] - equiv[i]))]   # ... take the one nearest the equivalent position
   }, integer(1))
-  same <- syr_at(pos)
+  eq_hex <- syr_at(equiv)
   data.frame(
     plasma_position = pos, plasma_hex = substr(pl, 1, 7),
     closest_position = m$position[closest], closest_hex = m$hex[closest],
     closest_dE = delta_e(pl, m$hex[closest]),
-    same_position_hex = same, same_position_dE = delta_e(pl, same),
+    equivalent_position = equiv, equivalent_hex = eq_hex, equivalent_dE = delta_e(pl, eq_hex),
     call = sprintf("syr_at(%s)", format(m$position[closest], nsmall = 3)),
     stringsAsFactors = FALSE
   )
